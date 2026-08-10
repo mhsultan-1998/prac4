@@ -22,7 +22,8 @@ def reverse_complement(seq: str) -> str:
     convention. Input is assumed to already be uppercase.
     """
     complemented = "".join(COMPLEMENT[base] for base in seq)
-    return complemented
+    return complemented[::-1]
+# Can do the string reversal earlier but this works too. Very minimal fix.
 
 
 def translate(seq: str) -> str:
@@ -34,7 +35,7 @@ def translate(seq: str) -> str:
     included in the returned protein string.
     """
     protein = []
-    for i in range(1, len(seq), 3):
+    for i in range(0, len(seq), 3):
         codon = seq[i:i + 3]
         amino = CODON_TABLE.get(codon)
         if amino is None or amino == "*":
@@ -51,6 +52,7 @@ def gc_content(seq: str) -> float:
     """
     if not seq:
         return 0.0
+    seq = seq.upper()
     gc = sum(1 for base in seq if base in "GC")
     return gc / len(seq)
 
@@ -63,10 +65,28 @@ def count_kmers(seq: str, k: int) -> dict[str, int]:
     and produce a shorter, invalid k-mer.
     """
     counts: dict[str, int] = {}
-    for i in range(len(seq) - k + 2):
-        kmer = seq[i:i + k]
+    check = 0
+    for i in range(len(seq) - k + 1):
+        if check > len(seq):
+            break
+        check = i + k
+        # print("i:", i)
+        # print("check:", check)
+        kmer = seq[i:check]
         counts[kmer] = counts.get(kmer, 0) + 1
+        # print(counts)
+        check += 1
     return counts
+
+
+    # counts: dict[str, int] = {}
+    #     for i in range(len(seq) - k + 2):
+    #         kmer = seq[i:i + k]
+    #         counts[kmer] = counts.get(kmer, 0) + 1
+    #     return counts
+# I hate how this function is written, and why is there no indexing error being raised?
+
+# Why isn't there an indexing error?!
 
 
 def hamming_distance(seq1: str, seq2: str) -> int:
@@ -77,6 +97,8 @@ def hamming_distance(seq1: str, seq2: str) -> int:
     ValueError rather than silently comparing only the overlapping
     portion.
     """
+    if len(seq1) != len(seq2):
+        return ValueError
     return sum(1 for a, b in zip(seq1, seq2) if a != b)
 
 
@@ -91,7 +113,41 @@ def sliding_window_mean_quality(quality: str, window: int) -> list[float]:
     """
     scores = [ord(ch) - 33 for ch in quality]
     result = []
-    for i in range(0, len(scores) - window + 1, window):
-        chunk = scores[i:i + window]
-        result.append(sum(chunk) / len(chunk))
+
+    # for i in range(0, len(scores) - window + 1, window):
+    #     chunk = scores[i:i + window]
+    #     result.append(sum(chunk) / len(chunk))
+
+    check = 0
+    # chunk = 0
+    while check < len(scores):
+        if (check+window) > (len(scores)-1):
+            chunk = scores[check:]
+            # print("check:", check)
+            result.append(sum(chunk) / len(chunk))
+            # print(result)
+            check = len(scores)
+        elif (check+window) <= (len(scores)-1):
+            chunk = scores[check:check+window]
+            # print("check:", check)
+            result.append(sum(chunk) / len(chunk))
+            # print(result)
+            check += window
+            # print(check)
+
     return result
+
+quality = "IIIIII"
+result = sliding_window_mean_quality(quality, 3)
+print(result)
+
+print("\n")
+quality = "IIIIIII"
+result = sliding_window_mean_quality(quality, 3)
+print(result)
+
+
+
+
+
+
