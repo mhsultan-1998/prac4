@@ -19,3 +19,5 @@ Add a test with a length that doesn't divide evenly (e.g. 10 bases,
 window 3, which should produce 4 windows: three of size 3 and one final
 window of size 1), work out by hand what the correct output should be,
 then fix the implementation so no bases are dropped.
+
+# Initial function setup had it such that anything outside of the chunks equal to the window length would be ignored as the bug says. So I rewrote the function such that a while loop would keep track of the quality window range so it would keep all the window length chunks and keep the remainder with some additional if statements to track if the indexing for the quality input would go out of bounds.

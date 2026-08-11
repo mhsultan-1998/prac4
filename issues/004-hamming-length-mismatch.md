@@ -15,3 +15,5 @@ valid answer but isn't one.
 The existing tests only use equal-length inputs, so none of them catch
 this. Add a test with mismatched lengths that expects a `ValueError`,
 then add the missing validation.
+
+# Did exactly as this bug requested adding a mismatched length test case. Fixed this bug by adding an if statement comparing sequence lengths.

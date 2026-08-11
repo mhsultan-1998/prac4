@@ -10,3 +10,5 @@ comes back as `0.0` instead of `1.0`.
 The existing tests only use uppercase input, so they all pass right now
 even though the bug is real. Add a test using a lowercase sequence to
 expose it, then fix the implementation.
+
+# After verifying the input is legit, just run a simple .upper() function on the string. But add another test case just to show even a mix of upper and lower cased sequences won't cause an issue.
